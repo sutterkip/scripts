@@ -1,0 +1,107 @@
+# This file contains a listing and descritpion of the executables
+# hand-crafted and beautifully engineered (though not spell-checked) by mrudolph.
+
+# I'm keeping this README seperate because:
+# a) I've already made it
+# b) Lets me remember what I wrote
+# c) Lets you complain to me quicker if they don't work
+
+##################
+g03-parse-vcd.sh #
+##################
+This script extracts the Excitation energies and Rotatory Strengths from
+a Gaussian-03 output. It ouputs them to a format like the cdspectrum file 
+from TurboMole. Once a header is added to it, it can be used with the 
+PlotspecTM programs
+
+##################
+g03-parse-ecd.sh #
+##################
+This script extracts the Excitation energies and Rotatory Strengths from
+a Gaussian-03 output. It ouputs them to a format like the cdspectrum file
+from TurboMole. Once a header is added to it, it can be used with the
+PlotspecTM programs
+
+####################
+plotspec-header.sh #
+####################
+This script adds a "generic" plotspec header to a TurboMole cdspectrum-like file.
+It needs no arguments (operates on a file called cdspectrum; must be present).
+You can give it the number of excitations as the first argument
+to minimize the amount of hand-editing afterwards.
+
+######
+load #
+######
+This script will load some more current software tha "module load" will. It needs to be sourced,
+since it updates path/system variable, so it needs to be run as
+. load "program"
+
+or
+
+source load "program"
+
+############
+tag-eps.sh #
+############
+This script will append a comment to the end of an EPS file with the working directory
+and original EPS file name from thewho.
+
+
+##########
+em64stat #
+amdstat  #
+ia32stat #
+##########
+These three scripts shows the jobs running on the em64t, amd64, and ia32 queues, respectively
+
+##########
+freeproc #
+##########
+This will tell you how many processors are free on each queue (from qstat3)
+
+#################
+gnu2eps.sh      #
+gnu2coloreps.sh #
+gnu2png.sh      #
+gnu2ps          #
+#################
+These three scripts will take a saved file from gnuplot (has to be saved as .gnu) and will turn it into
+an eps, color-eps or png image, respectively. Use the .gnu file as the argument;
+gnu2eps.sh lala.gnu
+
+#############
+tm-cd-uv.sh #
+#############
+This script parses a Turbomole output (built and tested from 5.8) to extract CD into a "cdspectrum" and "spectrum"
+file like it would create if the keywords weren't forgotten in the input. You have to tell it 1) the number of 
+excitations to look for based on symmetry and 2) the name of the file to parse. Examples:
+tm-cd-uv.sh -a 90 -f lala.out # Will extract the first 90 excitations with "a" symmetry from the file lala.out
+tm-cd-uv.sh -a2 30 -e 60 -f lala-d3.out # Will extract the first 30 "a2" excitations and the first 60 "e" excitations
+					# from the file lala-d3.out
+
+##########
+teleport #
+##########
+Quite possibly the most handy script EVER. Copies files via command line from thewho you your usual workgroup computer.
+Default download location is /home/$USER/Desktop. can further specify a folder with -d (that is in the Desktop folder!)
+Example: To copy lala.eps and lala-color.eps to my computer in /home/$USER/Desktop/latex/figures/;
+teleport -d latex/figures/  lala.eps lala-color.eps
+
+If I wated to do the same thing, but send it to another workgroup-computer I can override the default computer with -c
+teleport -d latex/figures/  -c ja04 lala.eps lala-color.eps
+
+##########
+qinfo.sh #
+##########
+Lets you see who is winning
+
+########
+slp.sh #
+########
+To print (small) files from thewho locally
+
+###########
+nw2xyz.sh #
+###########
+Parses an NWChem geometry optimization ouput

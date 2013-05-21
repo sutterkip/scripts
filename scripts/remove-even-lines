@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if test -z $1
+then
+  echo "usage: remove-even-lines filename"
+else
+  sed -e '2~2d' $1
+fi

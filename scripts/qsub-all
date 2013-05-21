@@ -1,0 +1,2 @@
+liste=`/bin/ls *.pbs`
+for i in $liste; do qsub $i; done

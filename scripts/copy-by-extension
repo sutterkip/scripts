@@ -1,0 +1,55 @@
+#! /bin/ksh
+
+# copy files from arbitrary extension to
+# same filename with another extension. The extension
+# is NOT resricted to ".txt", ".exe", ".f" etc.
+
+usage() {
+  echo " "
+  echo "usage: copy-by-extension fromext toext file(s)"
+  echo "       $1"
+  echo " "
+}
+
+if test -z "$1" 
+then
+ usage " "
+ exit 1
+fi
+if test -z "$2"
+then
+ usage "toext not specified ... aborting"
+ exit 2
+fi            
+fromext=$1
+toext=$2
+shift
+shift
+
+if test -z "$1"
+then
+ usage "no files specified ... aborting"
+ exit 3
+fi       
+liste="$@"
+echo "copying files ending on $fromext to extension $toext"
+
+for i in $liste
+do
+# new=`echo $i | sed "s/${fromext}\$/${toext}/"` # using sed, sh compatible
+ new=${i%$fromext}$toext                        # using ksh syntax, not sh
+if test "$i" != "$new"
+then
+cp $i $new
+if test $? -eq 0
+then
+echo "copied $i to $new"
+else
+echo "error copying $i to $new"
+usage 
+exit 4
+fi 
+fi
+done                    
+echo "... done"          
+exit 0

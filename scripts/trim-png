@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# will trim all PNGs present in a directory
+list=`/bin/ls *.png`
+
+for i in $list; do
+ base=`basename $i .png`
+ convert -trim $i $base-trim.png
+done
+

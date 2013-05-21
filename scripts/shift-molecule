@@ -1,0 +1,4 @@
+#!/bin/awk -f 
+BEGIN{a=1.0; b=2.0; c = 5.0;}
+NF > 3{printf("%s %12.7f %12.7f %12.7f\n", $1, $2+a, $3+b, $4+c)};
+#END{print "$end"}

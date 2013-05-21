@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# given a file, applying this script changes the filename
+# to filename.1
+# If filename.1 exists it will be renamed filename.2
+# etc up to filename.9. filename.9, if it also exists, will
+# be overwritten, assuming that its content is too old to
+# be of any interest anymore.
+
+usage() {
+  echo " "
+  echo "usage: rotate-file filename"
+  echo " "
+  echo "renames filename to filename.1, filename.1 to filename.2, etc."
+  echo "       $1"
+  echo " "
+}
+
+if test -z "$1"
+then
+ usage " "
+ exit 1
+fi
+
+# 
+if test -r $1
+then
+
+numbers="8 7 6 5 4 3 2 1"
+
+ for num in $numbers; do
+   nump=`dc -e "${num} 1 + p"`
+   if test -r $1.$num; then
+     mv $1.${num} $1.${nump}
+   fi
+ done
+ 
+ if test -r $1; then
+   if test -r $1.1; then
+    echo "found $1.1 but it should not be here. aborting"
+    exit 1
+   fi
+   mv $1 $1.1
+ fi
+
+else
+ echo "$1 not found"
+fi
+

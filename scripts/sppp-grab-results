@@ -1,0 +1,27 @@
+#! /usr/bin/awk -f
+#
+# extract spectral information from Stefan Grimme's PPP program
+# and put it into plotspec input format
+#
+/excitation energies     f/{
+  x = 0;
+# print $0; 
+  getline; getline; getline;
+  do {if (NF != 8) break; # exit this loop if the line doesn't contain spectral data
+  # print $0 
+  x++;
+  lambda[x] = $3 # wavelength
+  osc[x] = $4 # oscillator strength; length representation
+  rot[x] = $6 # rotatory strength; length representation
+    getline; getline; getline; getline; getline; getline;  }
+  while (1 == 1) 
+    }
+# 
+END {
+  printf ("&plot nsyme(1)=%s, ndegen(1)=1, sigma=0.13, sharpen=1, npoints=300, \n nexcit=%s, lorentz=.f., invert=.f., ev=.t. /\n", x,x) ;
+  print " "; print "# PlotspecTM input data from PPP program"; print "#";
+  for (i=1; i<=x; i++){
+    printf ("%f10  %e \n", 10000000/lambda[i], rot[i]) # print wavenumbers
+    #print lambda[i], rot[i] # print wavelengths
+      }
+}

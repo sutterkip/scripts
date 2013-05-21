@@ -1,0 +1,113 @@
+README				this file
+
+adf-extract-ord*                extracts ORD values from ADF
+                                AOResponse optical rotation calculation
+
+adf-grab-ortensor.awk           prints ADF AOResponse optical rotation
+                                tensor in Mathematica format
+
+adf-replace-xc.sh		shell script to replace the XC key
+				in ADF inputs. Useful when creating
+				series of benchmark job inputs
+
+adf-t21-nbo                     modify regular ADF input to generate
+                                NBOs and NLMOs after single point run
+
+adf2xyz                         extract XYZ from ADF geometry opt.
+                                (older adf versions)
+
+adf2xyz2			extract XYZ from ADF geometry opt. 
+				(adf developers version 2009)
+
+adfq				create PBS script from adf filename.inp
+                                using /software/adf/adfdev-trunk
+
+adfdevq                         create PBS script from adf filename.inp
+                                using $HOME/adfdev
+
+castep-grab-*                   various scripts to get coordinates
+                                and NMR shielding info from a castep 
+                                output. Print NMR tensor in Mathematica
+                                format. 
+
+clean-eps                       remove preview from DOS type EPS
+
+cookie.pl			message-of-the-day collection. 
+				add your own quotes!
+
+copy-by-extension		create copies of files with different 
+				extension. Useful for creating file names
+				for series of benchmark jobs
+
+copy-by-prefix			create copies of files with different
+                                prefix. Useful for creating file names
+                                for series of benchmark jobs
+
+create-adf-nbonmr.sh		takes ADF input file and creates a series
+				of jobs for spin-orbit NMR analysis with NBO
+
+create-adf-nboefg.sh            takes ADF input file and creates a series
+                                of jobs for scalar EFG analysis with NBO
+
+extract-rpm                     unpack a Linux RPM file
+
+f77f90                          translates *some* f77 to f90. WARNING:
+                                original file will be replaced
+
+g03-finalgeo-inputorientation.pl extract geometry from Gaussian log file
+
+g03-finalgeo-standardorientation.pl extract geometry from Gaussian log file
+
+qsub-all			submits all .pbs files in a directory
+
+random_string			create random string of characters
+				(sometimes useful for job file creation
+				or creation of randomly names scratch dirs)
+
+process-cpl-data2.awk		processes adf J-coupling results from CPL
+				use on the output file
+
+remove-even-lines		copies only odd line numbers from a text file
+				to stdout
+
+remove-odd-lines		copies only even line numbers from a text file
+                                to stdout 
+
+rotate-file			renames foo.bar to foo.bar.1
+                                if foo.bar.1 exists it will be renamed
+				to foo.bar.2, etc up to .9.
+				useful to keep old ouputs for a job, etc
+
+rotate-outputs			renames all files out.* and *.out
+				in a directory using rotate-file. Useful
+				if rerunning lots of jobs and keeping old
+				outputs
+
+shift-molecule			add a vector (1,2,5) to an XYZ file.
+				useful for debugging code.
+
+sppp-grab-results               prostprocessing for Grimme's PPP program
+
+tm2xyz				convert turbomole coord to XYZ
+
+trim-png                        auto-crop all png files in a directory
+
+view-pbs-adflogfile 		to view adf logfile of running job
+
+view-pbs-output			to view STDOUT of a running job
+
+xyz2g03.awk                     turn XYZ file into Gaussian .com input
+
+xyz2tm				convert XYZ to turbomole coord
+
+xyzau2ang                       convert block of XYZ coords from au to Angstrom
+
+shift-rotate-molecule           shifts and rotates a molecule,
+                                useful for debugging code
+
+adf-create-nbo.sh               take an input and make ADF NBO job
+
+nwchem-extract-cd               extract rotatory strength from nwchem
+                                job ready for plotspecTM
+
+

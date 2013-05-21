@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+usage() {
+   echo " "
+   echo " usage: clean-eps file[.eps] "
+   echo " "
+   echo " clean-eps produces a EPS from a given EPS file"
+   echo "  with a preview picture removed (if existing)."
+   echo " The original file will be overwritten!"
+   echo " "
+}
+if test -z $1; then
+ usage 
+ exit 
+fi
+#
+# set up
+#
+EPSTOOL=/software/bin/epstool
+EPSTOPDF=/usr/bin/epstopdf
+tempdir=/tmp
+tempfile="clean-eps.tmp"
+base=${1%.eps}
+path=`pwd`
+#
+if test ! -r ${base}.eps ; then
+  echo "file ${base}.eps not found. aborting."
+  usage
+fi
+echo $path $tempdir $base
+cp ${base}.eps ${tempdir}/${tempfile}
+cd ${tempdir}
+#
+#remove any DOS previews first and clean up eps code
+#
+char=`head --bytes=1 ${tempfile}`
+if test !  ${char} = '%' ; then
+  echo "removing DOS preview from ${base}.eps"
+  $EPSTOOL --extract-postscript --ignore-warnings ${tempfile} $$.tmp
+  mv $$.tmp ${tempfile}
+else 
+  echo "no DOS preview found. Leaving file unmodified"
+fi
+#
+# also delete any possible BS left by Illustrator that prevents
+# older versions from reading the file
+#
+sed -e '/^%%Creator/d' ${tempfile} >  $$.tmp
+mv $$.tmp ${tempfile}
+sed -e '/^%%AI8_CreatorVersion/d' ${tempfile} >  $$.tmp
+mv $$.tmp ${tempfile}
+#
+# copy temp file back to original destination
+mv ${tempfile} ${path}/${base}.eps
+cd $path
+exit
+
+

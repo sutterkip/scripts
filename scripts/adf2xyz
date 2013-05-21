@@ -1,0 +1,108 @@
+#!/usr/bin/awk -f
+#
+# read xyz coordinates from a geometry optimization
+# of ADF and print the data blocks to output
+# Comment:
+# By defaul getline sets NR, NF, etc. and returns "1" if operation succeed.
+# If not the result is "0" or "-1".
+# So we have to just check what is the result of getline.
+#
+#
+# look for starting geometry first,
+
+/At.Mass/{
+  print_0=0;
+  if ($1 ="(Angstrom"){     
+    for (i=1; i<=2; i++){
+      if (getline <= 0) {
+        m = "Unexpected EOF or error. Exit";
+        m = (m ": " ERRNO);
+        print m > "/dev/stderr";
+	exit;
+       }
+     }
+     sum=0;
+     while (NF!=0){   # first empty line ends.   
+       sum=sum+1
+       b1[sum]=$2;
+       b2[sum]=$3;
+       b3[sum]=$4;
+       b4[sum]=$5;
+       if (getline <= 0) {
+         m = "Unexpected EOF or error. Exit";
+         m = (m ": " ERRNO);
+         print m > "/dev/stderr";
+ 	 exit;
+       }
+     }
+    for (i=1; i<=2; i++){
+      if (getline <= 0) {
+        m = "Unexpected EOF or error. Exit";
+        m = (m ": " ERRNO);
+        print m > "/dev/stderr";
+	exit;
+       }
+     }
+     if($1="FRAGMENTS"){ # just test at the end.
+         print_0=1;
+     }
+  }
+}
+
+/Geometry Convergence/{
+  for (i=1; i<=4; i++){
+    if (getline <= 0) {
+      m = "Unexpected EOF or error. Exit";
+      m = (m ": " ERRNO);
+      print m > "/dev/stderr";
+      exit;
+    }
+  }
+  energy = $3;
+  if(print_0){  # print starting geometry
+    print_0=0;  # make sure only once!!
+    print(sum);
+    print("Energy: ",energy) 
+    for (k=1; k<= sum; k++){
+      printf("%3s%14.6f%14.6f%14.6f\n", b1[k],b2[k],b3[k],b4[k]);
+    }
+  }
+  while ($2 != "Integration") {
+    if (getline <= 0) {
+      m = "Unexpected EOF or error. Exit";
+      m = (m ": " ERRNO);
+      print m > "/dev/stderr";
+      exit;
+    }
+    if ($2 ~ /\(Cartesian\)/){        # \( & \) preserve () in search
+      for (i=1; i<=6; i++){
+        if (getline <= 0) {
+          m = "Unexpected EOF or error. Exit";
+          m = (m ": " ERRNO);
+          print m > "/dev/stderr";
+          exit;
+        }
+      }
+      sum = 0;
+      while ($1 !~ "--------") {
+        sum += 1;
+        b1[sum]=$2;
+        b2[sum]=$6;
+        b3[sum]=$7;
+        b4[sum]=$8;
+        if (getline <= 0) {
+          m = "Unexpected EOF or error. Exit"
+          m = (m ": " ERRNO)
+          print m > "/dev/stderr"
+          exit;
+        }
+      }    
+      print sum ; print "Energy: ", energy  ; 
+      for (k=1; k<= sum; k++){
+        printf("%3s%14.6f%14.6f%14.6f\n", b1[k],b2[k],b3[k],b4[k]);
+       }
+    }
+  }
+}
+
+

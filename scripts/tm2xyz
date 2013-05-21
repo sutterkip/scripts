@@ -1,0 +1,19 @@
+#!/bin/awk -f
+# coord -> xyz coordinate file
+# V 1.1 - 21.02.99 - BAH
+# JA: correction for bohr radius. BAH used 0.529167
+# JA: changed sript to read from stdin instead
+BEGIN{n=0;tm=0;bohr=0.529177};
+{
+ if (tm==0 && $1="$coord") {tm=1; next}
+ if (substr($1,1,1)=="$") {tm=-1; next}
+ if (tm==1) {
+   n++; x[n]=$1*bohr; y[n]=$2*bohr; z[n]=$3*bohr; at[n]=toupper($4)
+  }
+ }
+END{
+ printf "%d\n\n", n
+ for (i=1; i<=n; i++) {
+  printf "%s %10.6f %10.6f %10.6f\n", at[i], x[i], y[i], z[i]
+  }
+ }

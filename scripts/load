@@ -1,0 +1,56 @@
+#!/bin/bash
+# Because "module load ..." only works well if you
+# want to use outdated software...
+
+while [ "$1" != "" ]
+do
+case $1 in
+ adf)	### Load ADF
+        source /software/adf/adfdev-trunk/tag.sh > /dev/null #Shut it, adf!
+	PATH=$PATH:$ADFBIN
+	export path
+	shift 1;;
+
+ tm58)	### Load TurboMole 5.8
+	export TURBOMOLE_SYSNAME=x86_64-unknown-linux-gnu
+	export TURBODIR=/software/turbomole/5.x
+	source $TURBODIR/Config_turbo_env
+	shift 1 ;;
+
+ tm57)  ### Load TurboMole 5.71
+        export TURBOMOLE_SYSNAME=i786-pc-linux-gnu
+        export TURBODIR=/util/tmole/v5.7.1/TURBOMOLE
+        source $TURBODIR/Config_turbo_env
+        shift 1 ;;
+
+ g98)	### Load Gaussian 98
+	# Note, mrudolph has a problem using g98 from the thewho, so he has a local copy.
+	if [ "$USER" = "mrudolph" ]; then
+		source /san/user/mrudolph/thewho/g98/bsd/g98.profile
+	else
+		source /san/projects1/jochena/software/gaussian/g98/tag.sh
+	fi
+	shift 1;;
+
+ #g03)   ### Load Gaussian 03
+ #	source /software/gaussian/tag.sh
+ #	shift 1;;
+
+ -h)    ### In case one doesn't know what they're doing
+        echo " "
+        echo "Usage: . load "program" (One program at a time, note the ".")"
+	echo " "
+        echo "Supported programs are:"
+	echo " "
+	echo "adf 	:: (adfdev-trunk)"
+	echo "tm58 	:: (TurboMole v5.8)"
+	echo "tm57 	:: (Turbomole v5.7.1)"
+	echo "g98	:: (Gaussian 98)"
+        echo " "
+	shift 1;;
+
+  *)    echo "You have entered an unspecified command line variable!"
+	echo "Try load -h"
+	shift 1;;
+esac
+done

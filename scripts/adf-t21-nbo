@@ -1,0 +1,62 @@
+#!/bin/bash
+
+if test -z $1
+then
+    echo "usage: adf-add-nbo ADF-input"
+    exit
+fi
+
+# input filename
+INP=$1
+if test -f $INP
+then
+
+sed -e '/[rR][eE][lL][aA][tT][iI]/d' \
+    -e '/[Ff][Uu][Ll][Ll][Ff][Oo][Cc][Kk]/d' \
+    -e '/[Aa][Oo][Mm][Aa][Tt]2/d' \
+    -e '/[Ss][Aa][Vv][Ee][Ff]/d' \
+    -e '/[Ss][Yy][Mm][Mm][Ee][Tt][Rr][Yy]/d' \
+    -e '/[Aa][Tt][Oo][Mm][Ss]/s/.*/relativistic scalar ZORA\naomat2file\nfullfock\nsavefile TAPE15 TAPE10\nsymmetry nosym\n\nATOMS/' \
+    ${INP} > $$.scalar
+
+
+cat << EOF > $$.tmp
+
+rm adfnbo*.kf
+\$ADFBIN/adfnbo << eor
+write
+spherical
+:: read
+fock
+end input
+eor
+
+rm adfnbo.37 adfnbo.39 adfnbo.49 adfnbo.48
+
+# run the NBO program
+\$ADFBIN/gennbo < FILE47
+
+# run adfnbo in READ mode (LocOrb -> TAPE21)
+
+\$ADFBIN/adfnbo << eor
+ spherical
+ fock
+ read
+end input
+eor
+
+
+rm adfnbo.37 adfnbo.39 adfnbo.49 adfnbo.48
+
+mv TAPE21 \$PBS_O_WORKDIR/nbo-$INP.t21
+
+EOF
+
+cat $$.scalar $$.tmp > nbo-$INP
+
+rm $$.tmp $$.scalar
+
+
+else
+ echo "$INP : file not found"
+fi

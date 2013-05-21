@@ -1,0 +1,94 @@
+#!/bin/sh
+CURDIR=`pwd`
+if [ ! -f "$1" ] ; then
+  echo "No input file!!"
+  echo "Usage: $0 filename.inp n_proc queue time"
+  exit 1
+fi
+NAME=`basename $1 .inp`
+# some defaults: 2 proc, 12h
+NPROC=$2
+if [ ! "$2" ] ; then
+  NPROC=2
+  PPN=2
+fi
+
+NNODES=$[$NPROC/2]
+if [ $[$NNODES*2] -ne $NPROC ] ; then
+  NNODES=$[$NNODES+1]
+fi
+
+if [ $NPROC -le 1 ] ; then
+NPPN=1
+else
+NPPN=2
+fi
+
+if [ ! "$3" ] ; then
+  QUEUE=em64t
+else
+  QUEUE=$3
+fi
+
+if [ ! "$4" ] ; then
+  TIME=120:00
+else
+  TIME=$4
+fi
+
+
+#
+export CURDIR NAME NNODES NPPN TIME
+
+cat << EOF # | qsub
+#!/bin/sh
+#PBS -l nodes=${NNODES}:ppn=${NPPN}
+#PBS -l walltime=${TIME}:00
+#PBS -q ${QUEUE}
+#PBS -o $NAME.out
+#PBS -N ${NAME}
+#PBS -j oe
+#PBS -M jochena@buffalo.edu
+#PBS -m e
+#
+export LC_COLLATE=C
+ulimit -c unlimited
+export STEEPBASIS=/software/adf/extra-basis-sets/ZORA-steep
+export NAME=$NAME
+export CURDIR=$CURDIR
+#
+# pick adf version here:
+source \$HOME/adfdev/tag.sh
+#
+SCM_TMPDIR=\$PBSTMPDIR
+SCM_USETMPDIR=yes
+#
+cd \$PBSTMPDIR
+#
+NN=\`cat \$PBS_NODEFILE | wc -l\`
+#
+NSCM=\$NN
+#
+export SCM_TMPDIR SCM_USETMPDIR MPIDIR PATH NN NSCM
+echo "running in directory \$PWD"
+#
+# -----------------------------------------------------------------------
+# start: prepare script to clean up scratch directories
+# -----------------------------------------------------------------------
+CLEANUPSCRIPT=\$PBS_O_WORKDIR/pbscleanup_\$PBS_JOBID.sh
+echo "# clean up job $PBS_JOBID" >\$CLEANUPSCRIPT
+for i in \`cat \$PBS_NODEFILE | sort | uniq\`; do
+echo "ssh -Y \$i \\"rm -r \$PBSTMPDIR\\" " >> \$CLEANUPSCRIPT
+done
+chmod +x \$CLEANUPSCRIPT
+# -----------------------------------------------------------------------
+# end:  prepare script to clean up scratch directories
+# -----------------------------------------------------------------------
+#
+#
+################################USER_INPUT##################################
+
+`cat $CURDIR/$NAME.inp`
+
+#cp TAPE21 \$PBS_O_WORKDIR/$NAME.t21
+EOF

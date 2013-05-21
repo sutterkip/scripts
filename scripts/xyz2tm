@@ -1,0 +1,4 @@
+#!/bin/awk -f 
+BEGIN{print "$coord";bohr=1.0000000/0.5291772083}
+NF > 3{printf("%14.9f %14.9f %14.9f %s\n", $2*bohr, $3*bohr, $4*bohr, $1)};
+END{print "$end"}

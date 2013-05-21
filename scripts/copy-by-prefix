@@ -1,0 +1,53 @@
+#! /bin/ksh
+
+# copy files from arbitrary prefix to
+# same filename with another prefix. 
+
+usage() {
+  echo " "
+  echo "usage: copy-by-prefix fromprefix toprefix file(s)"
+  echo "       $1"
+  echo " "
+}
+
+if test -z "$1" 
+then
+ usage " "
+ exit 1
+fi
+if test -z "$2"
+then
+ usage "toprefix not specified ... aborting"
+ exit 2
+fi            
+fromext=$1
+toext=$2
+shift
+shift
+
+if test -z "$1"
+then
+ usage "no files specified ... aborting"
+ exit 3
+fi       
+liste="$@"
+echo "copying files beginning with $fromext to begin with $toext"
+
+for i in $liste
+do
+# new=`echo $i | sed "s/${fromext}\$/${toext}/"` # using sed, sh compatible
+ new=$toext${i#$fromext}                        # using ksh syntax, not sh
+if test "$i" != "$new"
+then
+cp $i $new
+if test $? -eq 0
+then
+echo "copied $i to $new"
+else
+echo "error copying $i to $new"
+usage
+exit 4 
+fi     
+fi
+done                    
+echo "... done"          

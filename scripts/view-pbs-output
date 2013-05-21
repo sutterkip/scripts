@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# print output file from a PBS job on thewho to stdout. The job-id is taken as 
+# an argument. There is some checking if that job actually exists or not. 
+
+usage() {
+  echo " "
+  echo "usage: view-pbs-output JOBID"
+  echo "       $1"
+}
+
+if test -z $1
+then
+ usage " "
+ exit
+fi
+
+jobid=`qstat2 | grep $1 | awk '{printf "%s ", \$1 }'`
+#echo "jobid = $jobid"
+if  [ -z "$jobid" ] 
+then
+ usage "Could not find JOBID $1 in the list of active or queued jobs. Aborting"
+ exit
+fi
+
+found="false"
+for i in ${jobid}; do
+    if [ "${i}" ==  "${1}" ] ; then
+	found="true"
+    fi
+done
+
+if [ ${found} == "false" ]; then
+	usage "Could not find JOBID $1 in the list of active or queued jobs. Aborting"
+	exit
+fi    
+
+
+node=`qstat2 | grep $1 | awk  '{print \$NF}'`;  node=${node%/*}; 
+echo "node = $node"
+
+rsh $node "cat /var/spool/pbs/spool/${1}.thew*.OU" > /tmp/$$.tmp
+
+less /tmp/$$.tmp
+
+rm /tmp/$$.tmp
+
+
+
